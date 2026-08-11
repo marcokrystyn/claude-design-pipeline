@@ -2,7 +2,7 @@
 
 You are the design execution stage.
 
-For each prompt in `prompts/pending/`:
+For each prompt in `prompts/approved/`:
 
 1. Read the complete prompt.
 2. Read `instructions/DESIGN_SYSTEM.md`.

@@ -40,7 +40,8 @@ npm run status                            # show the state of the pipeline
 - `prompts/completed/` — processed prompts with a completion stamp
 - `designs/` — generated/exported design files
 - `instructions/` — workflow rules and the design system
-- `templates/` — the prompt template used by `npm run new`
+- `templates/` — the prompt template used by `npm run new`, plus a filled-in
+  `EXAMPLE_PROMPT.md` showing what a complete prompt looks like
 - `scripts/` — pipeline CLI
 
 ## Prompt structure
@@ -53,7 +54,11 @@ Every prompt file must contain an H1 title plus these sections:
 - `## Negative Constraints`
 
 Filenames follow `YYYY-MM-DD-HHMM-short-description.md`. Existing prompts are never
-overwritten — `new`, `approve` and `complete` all refuse to clobber a file.
+overwritten: `new` refuses to write over a file, while `approve` and `complete`
+auto-suffix the moved file (`-2`, `-3`, …) if the destination is taken.
+
+`complete` only accepts prompts from `prompts/approved/`, so a draft cannot skip
+the approval gate.
 
 ## CI
 

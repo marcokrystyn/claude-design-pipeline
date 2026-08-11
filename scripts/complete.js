@@ -19,9 +19,10 @@ if (!query) {
 
 let prompt;
 try {
-  prompt = findPrompt(query, ['pending', 'approved']);
+  prompt = findPrompt(query, ['approved']);
 } catch (error) {
   console.error(error.message);
+  console.error('Only approved prompts can be completed — run: npm run approve -- <name>');
   process.exit(1);
 }
 
