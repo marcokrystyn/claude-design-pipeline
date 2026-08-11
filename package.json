@@ -1,0 +1,17 @@
+{
+  "name": "claude-design-pipeline",
+  "version": "1.0.0",
+  "description": "Claude Chat -> prompt -> Claude Design pipeline, with GitHub as the shared workspace.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "new": "node scripts/new-prompt.js",
+    "validate": "node scripts/validate.js",
+    "approve": "node scripts/approve.js",
+    "complete": "node scripts/complete.js",
+    "status": "node scripts/status.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,30 @@
+name: Validate prompts
+
+on:
+  push:
+    paths:
+      - 'prompts/**'
+      - 'scripts/**'
+      - '.github/workflows/validate-prompts.yml'
+  pull_request:
+    paths:
+      - 'prompts/**'
+      - 'scripts/**'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate prompt structure
+        run: node scripts/validate.js
+
+      - name: Pipeline status
+        if: always()
+        run: node scripts/status.js
