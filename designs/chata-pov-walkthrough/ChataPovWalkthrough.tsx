@@ -1,7 +1,7 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
+import { motion, useMotionValue, useTransform, type MotionValue } from 'framer-motion';
 
 /**
  * Chata POV Walkthrough — photo-sequence walkthrough.
@@ -70,6 +70,40 @@ function fadeOutOf(index: number, count: number): number {
 function panRange(drift: Drift): [string, string] {
   if (drift === 'hold') return ['0%', '0%'];
   return drift === 'out' ? ['0%', `${-PAN}%`] : [`${PAN}%`, '0%'];
+}
+
+/**
+ * How far the pinned section has been scrolled through, 0 to 1 — the section's
+ * top meeting the viewport top through to its bottom meeting the viewport bottom.
+ *
+ * Measured explicitly rather than with framer's `useScroll({ target })`, which
+ * resolved to a constant 1 here: the value never changed, so nothing downstream
+ * of it ever updated.
+ */
+function useSectionProgress(ref: RefObject<HTMLElement>, enabled: boolean): MotionValue<number> {
+  const progress = useMotionValue(0);
+
+  useEffect(() => {
+    if (!enabled) return;
+    const element = ref.current;
+    if (!element) return;
+
+    const update = () => {
+      const rect = element.getBoundingClientRect();
+      const travel = rect.height - window.innerHeight;
+      progress.set(travel <= 0 ? 0 : Math.min(1, Math.max(0, -rect.top / travel)));
+    };
+
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, [enabled, ref, progress]);
+
+  return progress;
 }
 
 function useMediaQuery(query: string): boolean {
@@ -302,10 +336,7 @@ export default function ChataPovWalkthrough({
   // advancing but never moves the frame under the reader.
   const scrollDriven = mounted && isDesktop && !reduced;
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
+  const scrollYProgress = useSectionProgress(containerRef, scrollDriven);
 
   const atEnd = index >= count - 1;
   const running = mounted && !scrollDriven && !paused && !atEnd;
@@ -336,61 +367,40 @@ export default function ChataPovWalkthrough({
 
   // Before hydration — and with scripting unavailable — the frames render as a
   // plain captioned stack that scrolls normally.
-  if (!mounted) {
-    return (
-      <section aria-label={label} className={`bg-[#0E0C0A] ${className}`}>
-        {photos.map((photo, i) => (
-          <figure key={photo.src} className="relative m-0 h-screen w-full overflow-hidden">
-            <FrameImage photo={photo} priority={i === 0} />
-            <figcaption className="absolute inset-x-0 bottom-0">
-              <div className="h-40 bg-gradient-to-t from-black/60 via-black/25 to-transparent" />
-              <span className="absolute bottom-6 left-5 font-serif text-xs uppercase tracking-[0.22em] text-[#C6A15B] sm:left-8">
-                {photo.caption}
-              </span>
-            </figcaption>
-          </figure>
-        ))}
-      </section>
-    );
-  }
-
-  if (scrollDriven) {
-    return (
-      <section
-        ref={containerRef}
-        aria-label={label}
-        className={`relative bg-[#0E0C0A] ${className}`}
-        style={{ height: `${count * 100}vh` }}
-      >
-        <div className="sticky top-0 h-screen w-full overflow-hidden">
-          {photos.map((photo, i) => (
-            <ScrollFrame
-              key={photo.src}
-              photo={photo}
-              index={i}
-              count={count}
-              progress={scrollYProgress}
-              priority={i === 0}
-            />
-          ))}
-          <Overlay
-            caption={active.caption}
-            position={position}
-            showBar={false}
-            barKey={index}
-            running={false}
-          />
-        </div>
-      </section>
-    );
-  }
-
-  return (
-    <section
-      aria-label={label}
-      className={`relative h-screen w-full overflow-hidden bg-[#0E0C0A] ${className}`}
-      onClick={togglePaused}
-    >
+  const body = !mounted ? (
+    photos.map((photo, i) => (
+      <figure key={photo.src} className="relative m-0 h-screen w-full overflow-hidden">
+        <FrameImage photo={photo} priority={i === 0} />
+        <figcaption className="absolute inset-x-0 bottom-0">
+          <div className="h-40 bg-gradient-to-t from-black/60 via-black/25 to-transparent" />
+          <span className="absolute bottom-6 left-5 font-serif text-xs uppercase tracking-[0.22em] text-[#C6A15B] sm:left-8">
+            {photo.caption}
+          </span>
+        </figcaption>
+      </figure>
+    ))
+  ) : scrollDriven ? (
+    <div className="sticky top-0 h-screen w-full overflow-hidden">
+      {photos.map((photo, i) => (
+        <ScrollFrame
+          key={photo.src}
+          photo={photo}
+          index={i}
+          count={count}
+          progress={scrollYProgress}
+          priority={i === 0}
+        />
+      ))}
+      <Overlay
+        caption={active.caption}
+        position={position}
+        showBar={false}
+        barKey={index}
+        running={false}
+      />
+    </div>
+  ) : (
+    <>
       {photos.map((photo, i) => (
         <AutoFrame
           key={photo.src}
@@ -421,6 +431,23 @@ export default function ChataPovWalkthrough({
       >
         {paused ? 'Pokračovat v prohlídce' : 'Pozastavit prohlídku'}
       </button>
+    </>
+  );
+
+  // One section carries the ref in every mode. Attaching it only in the pinned
+  // branch left useScroll measuring a ref that was still null on first render,
+  // so scroll progress never moved off zero and the sequence never advanced.
+  return (
+    <section
+      ref={containerRef}
+      aria-label={label}
+      className={`relative bg-[#0E0C0A] ${
+        mounted && !scrollDriven ? 'h-screen w-full overflow-hidden' : ''
+      } ${className}`}
+      style={scrollDriven ? { height: `${count * 100}vh` } : undefined}
+      onClick={mounted && !scrollDriven ? togglePaused : undefined}
+    >
+      {body}
     </section>
   );
 }
