@@ -14,6 +14,10 @@ function run(cmd) {
   execSync(cmd, { stdio: 'inherit', cwd: ROOT });
 }
 
+function capture(cmd) {
+  return execSync(cmd, { cwd: ROOT, encoding: 'utf8' }).trim();
+}
+
 const query = process.argv.slice(2).join(' ').trim();
 if (!query) {
   console.error('Usage: npm run publish -- <filename-or-fragment>');
@@ -35,6 +39,8 @@ try {
   }
 }
 
+const pendingPath = prompt.fullPath;
+
 if (!alreadyApproved) {
   const result = validateFile(prompt.fullPath);
   if (result.errors.length) {
@@ -48,7 +54,24 @@ if (!alreadyApproved) {
 }
 
 const relPath = path.relative(ROOT, prompt.fullPath);
-run(`git add "${relPath}"`);
-run(`git commit -m "Publish prompt: ${path.basename(relPath)}"`);
+
+// Stage both sides of the move. Staging only the new path leaves the pending
+// copy committed, so the prompt ends up in two stages at once and a fresh
+// clone reports it as both waiting for review and approved. The old path is
+// only staged when git already tracks it — a never-committed draft has
+// nothing to delete, and naming it would fail the pathspec.
+const staged = [relPath];
+if (!alreadyApproved) {
+  const pendingRel = path.relative(ROOT, pendingPath);
+  if (capture(`git ls-files -- "${pendingRel}"`)) staged.push(pendingRel);
+}
+run(`git add -A -- ${staged.map((p) => `"${p}"`).join(' ')}`);
+
+if (capture('git diff --cached --name-only')) {
+  run(`git commit -m "Publish prompt: ${path.basename(relPath)}"`);
+} else {
+  console.log('Nothing new to commit — prompt is already committed.');
+}
+
 run('git push origin HEAD');
 console.log(`Pushed ${relPath} to origin.`);
