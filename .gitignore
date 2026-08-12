@@ -6,3 +6,6 @@ Thumbs.db
 .env.local
 .vscode/
 .idea/
+
+# Per-machine Claude Code permission grants; the shared design-run skill is tracked.
+.claude/settings.local.json

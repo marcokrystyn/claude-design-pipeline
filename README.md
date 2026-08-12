@@ -29,9 +29,15 @@ npm run status                            # show the state of the pipeline
 3. The prompt lands in `prompts/pending/`.
 4. `npm run validate` confirms it has every required section.
 5. `npm run approve` promotes it to `prompts/approved/`.
-6. A design-capable Claude workflow reads the approved prompt and creates the design.
+6. In a local Claude Code session on this repo, the `design-run` skill reads the
+   approved prompt and builds the design.
 7. The design is saved in `designs/`, and `npm run complete` moves the prompt to
    `prompts/completed/` with a completion stamp appended.
+8. Optionally `/design-sync` pushes the resulting components into a claude.ai/design
+   design-system project.
+
+`npm run publish -- <name>` collapses steps 4, 5 and the commit+push into one
+command.
 
 ## Folders
 
@@ -66,8 +72,20 @@ the approval gate.
 pull request that touches `prompts/` or `scripts/`. A prompt missing a required
 section fails the build.
 
-## Important
+## Important — what cannot be automated
 
-GitHub is the shared workspace. It does not itself press buttons or invoke Claude
-Design automatically. The exact automation depends on the Claude feature/interface
-connected to this repository.
+GitHub is the shared workspace. It holds the queue; it does not invoke the design
+stage on its own.
+
+There is no automatic push from this repository into claude.ai/design. Design
+authorization is obtained through an interactive `/design-login` and is tied to a
+claude.ai login — there is no machine credential to put in GitHub Secrets, so a
+CI runner cannot hold it. The supported direction of travel is the reverse:
+Claude Design's "Send to Claude Code Web" seeds a project into a workspace.
+
+`/design-sync` is also not an execution path. It uploads a component library into
+a design-system project; it does not accept a prompt and return a design.
+
+So the design stage runs in a local Claude Code session via the `design-run`
+skill, started by a human. Everything before it — drafting, validation, the
+approval gate, and CI — is automated.
