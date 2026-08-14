@@ -1,0 +1,99 @@
+FLYTHROUGH — prompty pro image-to-video (5 klipů dle PORADI.txt)
+Každý klip = jeden nepřerušený pohyb kamery, ~5-8 s.
+Startovní snímek = odpovídající foto. Vždy image-to-video, ne text-to-video.
+
+===========================================================
+KLIP 1 — 01_exterier_den.jpg — otevírací záběr (den)
+===========================================================
+Aerial drone footage of a handcrafted log cabin, beginning high and wide with an
+establishing view of the full property, the manicured lawn, the stacked stone
+retaining wall and the surrounding evergreen forest, then smoothly and
+continuously descending and pushing forward toward the covered wooden deck. The
+drone moves in a single uninterrupted arc — no cuts, no edits — gradually
+lowering altitude and orbiting slightly as it settles on the deck, its timber
+railing and the tall triangular gable windows. Preserve the exact architecture,
+round log walls, roof pitch, window layout, deck furniture placement, landscaping
+and stone wall from the reference image. The movement feels like a professional
+cinematic drone operator — one confident, fluid pass, no cuts, no teleporting, no
+jump edits. Maintain realistic depth, natural parallax and consistent scale
+throughout. Bright sun-drenched early-autumn atmosphere, photorealistic quality.
+End the shot hovering just above lawn level with a clear sweeping view of the
+deck and cabin facade.
+
+===========================================================
+KLIP 2 — 02_terasa.jpg — přechod ven → dovnitř
+===========================================================
+Slow cinematic forward glide across a wooden cabin deck at eye level, drifting
+gently past two white Adirondack chairs toward the timber railing and the open
+valley view beyond. The camera moves in one continuous unbroken push, with a
+subtle rise at the end. Preserve the exact deck planking, railing design, chair
+placement, round log wall on the left and the autumn treeline in the background
+from the reference image. Soft warm late-afternoon light, natural haze in the
+distance, realistic parallax between railing posts and background trees.
+Photorealistic, no cuts, no camera shake, no people.
+
+===========================================================
+KLIP 3 — 03_kuchyne.jpg — interiér
+===========================================================
+Slow cinematic interior dolly through a warmly lit log cabin kitchen and dining
+area, drifting gently forward and slightly downward over the set dining table
+with plates, glassware and the deep red table runner, toward the kitchen
+counter. One continuous unbroken camera move. Preserve the exact log walls,
+checkered tile floor, table setting, cabinetry, appliances and wall art from the
+reference image. Golden low-angle sunlight streaming through the window, warm
+candle-like ambience, gentle glints on the glassware. Photorealistic, no cuts,
+no people, no added objects.
+
+===========================================================
+KLIP 4 — 04_loznice.jpg — interiér
+===========================================================
+Slow cinematic interior push through a cozy knotty-pine cabin bedroom, drifting
+forward past the quilted bed toward the window and the antler lamp on the
+dresser, with a soft settle at the end. One continuous unbroken camera move.
+Preserve the exact wood paneling, bedding pattern, moose valance, framed
+artwork, dresser, mirror and lamp placement from the reference image. Warm
+tungsten lamp light against cool daylight from the window, soft shadows.
+Photorealistic, no cuts, no people, no added furniture.
+
+===========================================================
+KLIP 5 — 05_exterier_soumrak.jpg — návrat ven + day→dusk (a loop)
+===========================================================
+Aerial drone footage of the same handcrafted log cabin at blue hour, the camera
+slowly rising and pulling back from the glowing deck to a wide establishing view
+of the property, the lawn and the stone retaining wall, in one continuous
+unbroken move. Warm amber interior light pours through the tall gable windows
+and the porch sconces; the deep blue twilight sky and dark evergreen silhouettes
+stay stable throughout. Preserve the exact architecture, window layout, deck
+railing, landscaping and stone wall from the reference image. Subtle natural
+light bloom from the windows, no flicker, no cuts, no camera shake, no people.
+Photorealistic luxury real estate drone tour aesthetic.
+
+--- varianta pro time-lapse den→soumrak (01 → 05 jako jeden klip) ---
+Použij 01_exterier_den.jpg jako první snímek a 05_exterier_soumrak.jpg jako
+poslední snímek (first/last frame mode). Prompt:
+Static-to-slow-drift exterior shot of a log cabin, a smooth continuous time-lapse
+transition from bright sunny afternoon to deep blue twilight: the sunlight fades,
+shadows lengthen, the sky deepens to blue, and the interior lights and porch
+sconces gradually glow on. The camera holds nearly still with only a very slow
+subtle push in. Architecture, landscaping and stone wall remain perfectly stable
+and identical throughout. Photorealistic, no cuts, no flicker, no morphing
+geometry, no people.
+
+===========================================================
+NEGATIVE PROMPT (do všech klipů)
+===========================================================
+people, humans, text, watermark, logo, camera shake, jump cut, morphing
+architecture, warping walls, extra windows, extra buildings, swimming pool,
+distortion, fisheye, motion blur artifacts, oversaturated colors, lens flare
+artifacts, duplicated furniture, flickering lights
+
+===========================================================
+POZNÁMKY
+===========================================================
+- Objekt NEMÁ bazén. Nikdy nepiš "pool", "pool area" ani "outdoor lounge" —
+  model by ho dogeneroval.
+- Kratší klipy = menší drift. 5-6 s drží geometrii líp než 10 s.
+- Když se stavba začne "vlnit", zpomal pohyb kamery (méně "descending and
+  pushing forward", víc "slow subtle drift").
+- 01 a 05 = stejný vantage point → konec klipu 5 navazuje zpět na začátek
+  klipu 1 pro seamless loop.

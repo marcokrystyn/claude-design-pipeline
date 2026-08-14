@@ -1,0 +1,11 @@
+FLYTHROUGH — pořadí fotek
+
+01_exterier_den.jpg      → otevírací záběr (den)
+02_terasa.jpg           → přechod ven→dovnitř
+03_kuchyne.jpg          → interiér
+04_loznice.jpg          → interiér
+05_exterier_soumrak.jpg → návrat na exteriér + time-lapse den→soumrak
+                          (stejný záběr jako 01, jen za soumraku → čte se jako západ slunce)
+
+Pozn.: 01 a 05 jsou stejný vantage point (den vs. soumrak) → použij je
+na uzavírací day→dusk přechod i na seamless loop zpět na začátek.
